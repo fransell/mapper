@@ -66,5 +66,15 @@ end
 
 end
 
+@testset "larHollowCyl" begin
+	@test CalcoloVolumeBox(larHollowCyl(0,1,5,2*pi)()[1])==20
+	@test CalcoloVolumeBox(larHollowCyl(1,2,4,pi)()[1])==32
+	@test CalcoloVolumeBox(larHollowCyl(1,4,3,pi/2)()[1])==48
+end
 
+@testset "larHollowSphere" begin
+           @test CalcoloVolumeBox(larHollowSphere(0,2,pi,2*pi)([60,60,1])[1])==64
+           @test CalcoloVolumeBox(larHollowSphere(0,6,pi,pi)([32,32,1])[1])==864
+           @test CalcoloVolumeBox(larHollowSphere(0,4,pi,2*pi)([60,60,1])[1])==8^3
+       end
 

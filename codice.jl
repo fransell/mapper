@@ -76,7 +76,7 @@ function larHollowCyl(r,R,height,angle=2*pi)
 		V=[angle 0 0;0 R-r 0;0 0 height]*V
 		V=broadcast(+,V,[0,r,0])
 		W=[V[:,k] for k=1:size(V,2)]
-		X=hcat(map(p->let(u,v,z)=p;[v*cos(u);v*sin(u);z*height] end,W)...)
+		X=hcat(map(p->let(u,v,z)=p;[v*cos(u);v*sin(u);z] end,W)...)
         return X,CV
     end
     return larHollowCyl0
@@ -94,7 +94,7 @@ function larHollowSphere(r,R,angle1=pi,angle2=2*pi)
     end
     return larHollowSphere0
 end
-#non si visualizza attenzione ricontrolla!!
+
 
 
 
