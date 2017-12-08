@@ -4,11 +4,11 @@ function larCircle(radius=1,angle=2*pi)
         V1=(angle/shape)*V1
         W=hcat(map(u->[radius*cos(u); radius*sin(u)],V1)...)
         return W,EV
-        end
+    end
     return larCircle0
 end
 
-  function larHelix(radius=1,pitch=1,nturns=2)
+function larHelix(radius=1,pitch=1,nturns=2)
     function larHelix0(shape=36*nturns)
         angle=nturns*2*pi
         V,CV=LARLIB.larCuboids([shape])
@@ -16,7 +16,7 @@ end
         #se lo mettevo direttamente in W cioè radius*cos(u*angle/shape);ecc il test con (1,1,3) non passava
         W=hcat(map(u->[radius*cos(u);radius*sin(u);(pitch/(2*pi))*u],V)...)
         return W,CV
-        end
+    end
     return larHelix0
  end
 
@@ -28,7 +28,7 @@ function larDisk(radius=1,angle=2*pi)
         W=[V[:,k] for k=1:size(V,2)]
         Z=hcat(map(p->let(u,v)=p;[v*cos(u);v*sin(u)] end,W)...)
         return Z,CV
-        end
+    end
     return larDisk0    
 end
 
@@ -41,7 +41,7 @@ function larRing(r1,r2,angle=2*pi)
 		W=[V[:,k] for k=1:size(V,2)]
 		Z=hcat(map(p->let(u,v)=p;[v*cos(u);v*sin(u)] end,W)...)
         return Z,CV
-     end
+    end
     return larRing0
 end
 
