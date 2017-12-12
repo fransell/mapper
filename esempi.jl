@@ -12,5 +12,5 @@ LARVIEW.viewexploded(V,CV)
 V,CV=larRing(3,7,pi)([80,10])
 LARVIEW.viewexploded(V,CV)
 
-V,CV=larTorus(3,1,2*pi,2*pi)()
+V,CV=larTorus(1,3,2*pi,2*pi)()
 LARVIEW.viewexploded(V,CV)
