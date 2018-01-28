@@ -151,7 +151,7 @@ function larHollowSphere(r,R,angle1=pi,angle2=2*pi)
     return larHollowSphere0
 end
 #funzione di un altro modulo simplexn
-function larExtrude(model, pattern)
+function larExtrude1(model, pattern)
     V, FV = model
     d,m=length(FV[1]), length(pattern)
     coords = cumsum(append!([0],abs.(pattern)))
