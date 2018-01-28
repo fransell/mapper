@@ -47,16 +47,42 @@ end
     @test CalcoloAreaBox(larDisk(5,pi/2)()[1])==25
 end
 
+@testset "LarHelicoid" begin
+    @test CalcoloVolumeBox(larHelicoid()()[1])==8 
+    #raggio=1, passo=1, numgiri=2, è contenuto in un parallelepipedo di volume (raggio*2)^2*passo*numgiri
+    @test CalcoloVolumeBox(larHelicoid(2,1,2,2)()[1])==64
+    @test CalcoloVolumeBox(larHelicoid(1,0.5,2,5)()[1])==40
+    @test CalcoloVolumeBox(larHelicoid(1,0.3,1,3)()[1])==12  
+end
+
 @testset "larRing" begin
     @test CalcoloAreaBox(larRing(1,3,2*pi)()[1])==36
     @test CalcoloAreaBox(larRing(1,2,pi)()[1])==8
     @test CalcoloAreaBox(larRing(2,5,pi/2)()[1])==25
 end
 
+@testset "larSphere" begin
+    @test CalcoloVolumeBox(larSphere(2,pi,2*pi)()[1])==64
+    @test CalcoloVolumeBox(larSphere(6,pi,pi)()[1])==864
+    @test CalcoloVolumeBox(larSphere(4,pi,2*pi)()[1])==8^3
+end
+
 @testset "larCylinder" begin
 	@test CalcoloVolumeBox(larCylinder(1,5,2*pi)()[1])==20
 	@test CalcoloVolumeBox(larCylinder(2,2,pi)()[1])==16
 	@test CalcoloVolumeBox(larCylinder(1,4,pi)()[1])==8
+end
+
+@testset "larToroidal" begin
+    @test CalcoloVolumeBox(larToroidal(1,3,2*pi,2*pi)()[1])==128
+    @test CalcoloVolumeBox(larToroidal(2,3,2*pi,2*pi)()[1])==400
+    #volume box toro=(((R+r)*2)^2)*(r*2)
+
+end
+
+@testset "larCrown" begin
+    @test CalcoloVolumeBox(larCrown(1,3,2*pi)()[1])==128
+    @test CalcoloVolumeBox(larCrown(2,3,2*pi)()[1])==400
 end
 
 @testset "larTorus" begin
