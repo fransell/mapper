@@ -99,7 +99,7 @@ function larToroidal(r=1,R=2,angle1=2*pi,angle2=2*pi)
     return larToroidal0    
 end
 
-function larCrown(r=2,R=1,angle=2*pi)
+function larCrown(r=1,R=2,angle=2*pi)
     function larCrown0(shape=[24,36])
         V,FV=larSimplexGrid1(shape)
         V=hcat(V...)
@@ -114,15 +114,74 @@ function larCrown(r=2,R=1,angle=2*pi)
 end
 
 function larTorus(r,R,angle1=2*pi,angle2=2*pi)
-	function larTorus0(shape=[24,36,1])
-		V,CV=LARLIB.larCuboids(shape)
-		V=[1./shape[1] 0 0;0 1./shape[2] 0;0 0 1./shape[3]]*V
-		V=[angle1 0 0;0 angle2 0;0 0 r]*V
-		W=[V[:,k] for k=1:size(V,2)]
-		X=hcat(map(p->let(u,v,z)=p;[(R+z*cos(u))*cos(v);(R+z*cos(u))*sin(v);-z*sin(u)] end,W)...)
+    function larTorus0(shape=[24,36,1])
+        V,CV=LARLIB.larCuboids(shape)
+        V=[1./shape[1] 0 0;0 1./shape[2] 0;0 0 1./shape[3]]*V
+        V=[angle1 0 0;0 angle2 0;0 0 r]*V
+        W=[V[:,k] for k=1:size(V,2)]
+        X=hcat(map(p->let(u,v,z)=p;[(R+z*cos(u))*cos(v);(R+z*cos(u))*sin(v);-z*sin(u)] end,W)...)
         return X,CV
     end
     return larTorus0
+end
+
+function larBall(radius=1,angle1=pi,angle2=2*pi)
+    function larBall0(shape=[18,36])
+        V,CV=larSphere(radius,angle1,angle2)(shape)
+        W = [Any[V[h,k] for h=1:size(V,1)] for k=1:size(V,2)]
+        X,CV=p.checkModel([W,CV])
+        X=transpose(X)
+        return X,[collect(0:size(X,2)-1)]
+    end
+    return larBall0
+end
+
+function larBall1(radius=1,angle1=pi,angle2=2*pi)
+    function larBall10(shape=[36,1,1])
+        V,CV=LARLIB.larCuboids(shape)
+        V=[1./shape[1] 0 0;0 1./shape[2] 0;0 0 1./shape[3]]*V
+        V=[angle1 0 0;0 angle2 0;0 0 radius]*V
+        V=broadcast(+,V,[-(angle1)/2,-(angle2)/2,0])
+        W=[V[:,k] for k=1:size(V,2)]
+        X=hcat(map(p->let(u,v,z)=p;[z*cos(u)*cos(v);z*cos(u)*sin(v);z*sin(u)] end,W)...)
+        return X,CV
+    end
+    return larBall10
+end
+
+function larRod(radius=1,height=3,angle=2*pi)
+    function larRod0(shape=[36,1])
+        V,CV=larCylinder(radius,height,angle)(shape)
+        W = [Any[V[h,k] for h=1:size(V,1)] for k=1:size(V,2)]
+        X,CV=p.checkModel([W,CV-1])
+        X=transpose(X)
+        return X,[collect(0:size(X,2)-1)]
+    end
+    return larRod0
+end
+
+function larRod1(radius=1,height=3,angle=2*pi)
+    function larRod10(shape=[36,1,1])
+        V,CV=LARLIB.larCuboids(shape)
+        V=[1./shape[1] 0 0;0 1./shape[2] 0;0 0 1./shape[3]]*V
+        V=[angle 0 0;0 radius 0;0 0 height]*V
+        W=[V[:,k] for k=1:size(V,2)]
+        X=hcat(map(p->let(u,v,z)=p;[v*cos(u);v*sin(u);z] end,W)...)
+        return X,CV
+    end
+    return larRod10
+end
+
+function larPizza(r,R,angle=pi)
+    function larPizza0(shape=[24,36])
+        V,CV=larCrown(r,R,angle)(shape)
+        W = [Any[V[h,k] for h=1:size(V,1)] for k=1:size(V,2)]
+        X,CV=p.checkModel([W,CV])
+        X=transpose(X)
+        H=hcat(X,[0 0;0 0;-r r])
+        return H,[collect(0:size(H,2)-1)]
+    end
+    return larPizza0
 end
 
 function larHollowCyl(r,R,height,angle=2*pi)
