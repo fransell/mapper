@@ -1,9 +1,9 @@
 function larCircle(radius=1,angle=2*pi)
     function larCircle0(shape=36)
-        V1,EV=LARLIB.larCuboids([shape])
-        V1=(angle/shape)*V1
-        W=hcat(map(u->[radius*cos(u); radius*sin(u)],V1)...)
-        return W,EV
+        V,CV=LARLIB.larCuboids([shape])
+        V=(angle/shape)*V
+        W=hcat(map(u->[radius*cos(u); radius*sin(u)],V)...)
+        return W,CV
     end
     return larCircle0
 end
@@ -35,14 +35,14 @@ end
 function larHelicoid(R=1.,r=0.5,pitch=1.,nturns=2)
     function larHelicoid0(shape=[36*nturns,2])
         angle=nturns*2*pi
-        V,FV=larSimplexGrid1(shape)
+        V,CV=larSimplexGrid1(shape)
         V=hcat(V...)
         V=[1./shape[1] 0;0 1./shape[2]]*V
         V=[angle 0;0 R-r]*V
         V=broadcast(+,V,[0,r])
         W=[V[:,k] for k=1:size(V,2)]
         X=hcat(map(p->let(u,v)=p;[v*cos(u);v*sin(u);(pitch/(2*pi))*u] end,W)...)
-        return X,FV
+        return X,CV
     end
     return larHelicoid0    
 end
@@ -62,14 +62,14 @@ end
 
 function larSphere(radius=1,angle1=pi,angle2=2*pi)
     function larSphere0(shape=[18,36])
-        V,FV=larSimplexGrid1(shape)
+        V,CV=larSimplexGrid1(shape)
         V=hcat(V...)
         V=[1./shape[1] 0;0 1./shape[2]]*V
         V=[angle1 0;0 angle2]*V
         V=broadcast(+,V,[-angle1/2,-angle2/2])
         W=[V[:,k] for k=1:size(V,2)]
         X=hcat(map(p->let(u,v)=p;[radius*cos(u)*cos(v);radius*cos(u)*sin(v);radius*sin(u)]end,W)...) 
-        return X,FV
+        return X,CV
         end
     return larSphere0    
 end
@@ -88,42 +88,36 @@ end
 
 function larToroidal(r=1,R=2,angle1=2*pi,angle2=2*pi)
     function larToroidal0(shape=[24,36])
-        V,FV=larSimplexGrid1(shape)
+        V,CV=larSimplexGrid1(shape)
         V=hcat(V...)
         V=[1./shape[1] 0;0 1./shape[2]]*V
         V=[angle1 0;0 angle2]*V
         W=[V[:,k] for k=1:size(V,2)]
         X=hcat(map(p->let(u,v)=p;[(R+r*cos(u))*cos(v);(R+r*cos(u))*sin(v);-r*sin(u)]end,W)...) 
-        return X,FV
+        return X,CV
     end
     return larToroidal0    
 end
 
 function larCrown(r=1,R=2,angle=2*pi)
     function larCrown0(shape=[24,36])
-        V,FV=larSimplexGrid1(shape)
+        V,CV=larSimplexGrid1(shape)
         V=hcat(V...)
         V=[1./shape[1] 0;0 1./shape[2]]*V
         V=[pi 0;0 angle]*V
         V=broadcast(+,V,[-pi/2,0])
         W=[V[:,k] for k=1:size(V,2)]
         X=hcat(map(p->let(u,v)=p;[(R+r*cos(u))*cos(v);(R+r*cos(u))*sin(v);-r*sin(u)]end,W)...)
-        return X,FV
+        return X,CV
     end
     return larCrown0    
 end
 
-function larTorus(r,R,angle1=2*pi,angle2=2*pi)
-    function larTorus0(shape=[24,36,1])
-        V,CV=LARLIB.larCuboids(shape)
-        V=[1./shape[1] 0 0;0 1./shape[2] 0;0 0 1./shape[3]]*V
-        V=[angle1 0 0;0 angle2 0;0 0 r]*V
-        W=[V[:,k] for k=1:size(V,2)]
-        X=hcat(map(p->let(u,v,z)=p;[(R+z*cos(u))*cos(v);(R+z*cos(u))*sin(v);-z*sin(u)] end,W)...)
-        return X,CV
-    end
-    return larTorus0
-end
+function larBox(minVect,maxVect)
+    siz=maxVect-minVect
+    box=larApplyMapper(s(siz))(LARLIB.larCuboids(fill(1,length(siz))))
+    return larApplyMapper(t(minVect))(box)
+end 
 
 function larBall(radius=1,angle1=pi,angle2=2*pi)
     function larBall0(shape=[18,36])
@@ -172,6 +166,18 @@ function larRod1(radius=1,height=3,angle=2*pi)
     return larRod10
 end
 
+function larTorus(r,R,angle1=2*pi,angle2=2*pi)
+    function larTorus0(shape=[24,36,1])
+        V,CV=LARLIB.larCuboids(shape)
+        V=[1./shape[1] 0 0;0 1./shape[2] 0;0 0 1./shape[3]]*V
+        V=[angle1 0 0;0 angle2 0;0 0 r]*V
+        W=[V[:,k] for k=1:size(V,2)]
+        X=hcat(map(p->let(u,v,z)=p;[(R+z*cos(u))*cos(v);(R+z*cos(u))*sin(v);-z*sin(u)] end,W)...)
+        return X,CV
+    end
+    return larTorus0
+end
+
 function larPizza(r,R,angle=pi)
     function larPizza0(shape=[24,36])
         V,CV=larCrown(r,R,angle)(shape)
@@ -209,8 +215,9 @@ function larHollowSphere(r,R,angle1=pi,angle2=2*pi)
     end
     return larHollowSphere0
 end
+
 #funzione di un altro modulo simplexn
-function larExtrude1(model, pattern)
+#=function larExtrude1(model, pattern)
     V, FV = model
     d,m=length(FV[1]), length(pattern)
     coords = cumsum(append!([0],abs.(pattern)))
@@ -238,18 +245,18 @@ function larExtrude1(model, pattern)
     end
     return outVertices, outCellGroups
 end
+=#
 
 
 function larSimplexGrid1(shape)
     model=[[]],[[0]]
     for item in shape
-        pattern=[1 for i in 1:item]
-        model=larExtrude1(model,pattern)
+        model=larExtrude1(model,fill(1,item))
     end
     return model
 end
-#=
-come la avevo fatta io
+
+#come la avevo fatta io
 function larExtrude1(model,pattern)
     V,FV=model
     d,m=length(FV[1]), length(pattern)
@@ -258,28 +265,53 @@ function larExtrude1(model,pattern)
     for cell in FV  
         tube=[v+k*offset for k in range(0,m+1) for v in cell]
         cellTube=[tube[k:k+d] for k in range(1,rangelimit)]
-        r=[reshape(cellTube,d,m)]
-        outcells=push!(outcells,r)
+        outcells=vcat(outcells,reshape(cellTube,d,m))
     end
     cellGroups=[]
-    for k in (1:m)
-        for i in (1:length(outcells))
-            for j in (1:d)
-                push!(cellGroups,outcells[i][1][j,k])
-            end
+    for i in 1:size(outcells,2)
+        if pattern[i]>0
+            cellGroups=vcat(cellGroups,outcells[:,i])
         end
     end
-    outVertices=[]
-    for z in coords
-        for v in V
-            x=copy(v)
-            outVertices=append!(outVertices,[append!(x,[z])])
-        end
-    end
+    outVertices=[vcat(v,[z]) for z in coords for v in V]
     outModel=outVertices,cellGroups
-=#
+end
 
 
+function t(args)
+    d=length(args)
+    mat=eye(d+1,d+1)
+    for k in 1:d
+        mat[k,d+1]=args[k]
+    end
+    return mat
+end
+
+function s(args)
+    d=length(args)
+    mat=eye(d+1,d+1)
+    for k in 1:d
+        mat[k,k]=args[k]
+    end
+    return mat
+end
+
+function larApplyMapper(affineMatrix)
+    function larApplyMapper0(model)
+        if length(model)==2 
+            V,CV=model
+        elseif length(model)==3
+            V,CV,FV=model 
+        end
+        V=*(affineMatrix,vcat(V,transpose(fill(1.0,size(V,2)))))
+        if length(model)==2 
+            return V[1:size(V,1)-1,:], CV
+        elseif length(model)==3
+            return V[1:size(V,1)-1,:],CV,FV 
+        end
+        return larApplyMapper0
+    end
+end
 
 
 

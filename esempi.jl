@@ -66,6 +66,12 @@ W = [Any[V[h,k] for h=1:size(V,1)] for k=1:size(V,2)]
 hpc = p.STRUCT(p.MKPOLS(PyObject([W,CV,[]])))
 p.VIEW(hpc)
 
+V,CV=larBox([-1,-1,-1],[1,1,1])
+CV=CV-1
+W = [Any[V[h,k] for h=1:size(V,1)] for k=1:size(V,2)]
+hpc = p.STRUCT(p.MKPOLS(PyObject([W,CV,[]])))
+p.VIEW(hpc)
+
 V,CV=larBall(1,pi,pi)()
 W = [Any[V[h,k] for h=1:size(V,1)] for k=1:size(V,2)]
 hpc = p.STRUCT(p.MKPOLS(PyObject([W,CV,[]])))
