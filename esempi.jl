@@ -51,12 +51,7 @@ W = [Any[V[h,k] for h=1:size(V,1)] for k=1:size(V,2)]
 hpc = p.STRUCT(p.MKPOLS(PyObject([W,CV,[]])))
 p.VIEW(hpc)
 
-V,CV=larCrown()()
-W = [Any[V[h,k] for h=1:size(V,1)] for k=1:size(V,2)]
-hpc = p.STRUCT(p.MKPOLS(PyObject([W,CV,[]])))
-p.VIEW(hpc)
-
-V,CV=larCrown(1,3,2*pi)()
+V,CV=larCrown(1,2,2*pi)()
 W = [Any[V[h,k] for h=1:size(V,1)] for k=1:size(V,2)]
 hpc = p.STRUCT(p.MKPOLS(PyObject([W,CV,[]])))
 p.VIEW(hpc)
@@ -77,19 +72,7 @@ W = [Any[V[h,k] for h=1:size(V,1)] for k=1:size(V,2)]
 hpc = p.STRUCT(p.MKPOLS(PyObject([W,CV,[]])))
 p.VIEW(hpc)
 
-V,CV=larBall1(1,pi,pi)([36,24,1])
-CV=CV-1
-W = [Any[V[h,k] for h=1:size(V,1)] for k=1:size(V,2)]
-hpc = p.STRUCT(p.MKPOLS(PyObject([W,CV,[]])))
-p.VIEW(hpc)
-
 V,CV=larRod()()
-W = [Any[V[h,k] for h=1:size(V,1)] for k=1:size(V,2)]
-hpc = p.STRUCT(p.MKPOLS(PyObject([W,CV,[]])))
-p.VIEW(hpc)
-
-V,CV=larRod1()()
-CV=CV-1
 W = [Any[V[h,k] for h=1:size(V,1)] for k=1:size(V,2)]
 hpc = p.STRUCT(p.MKPOLS(PyObject([W,CV,[]])))
 p.VIEW(hpc)
@@ -106,7 +89,7 @@ W = [Any[V[h,k] for h=1:size(V,1)] for k=1:size(V,2)]
 hpc = p.STRUCT(p.MKPOLS(PyObject([W,CV,[]])))
 p.VIEW(hpc)
 
-V,CV=larPizza(0.5,4,pi/3)()
+V,CV=larPizza(0.2,4,pi/3)()
 W = [Any[V[h,k] for h=1:size(V,1)] for k=1:size(V,2)]
 hpc = p.STRUCT(p.MKPOLS(PyObject([W,CV,[]])))
 p.VIEW(hpc)

@@ -1,4 +1,4 @@
-function larCircle(radius=1,angle=2*pi)
+function larCircle(radius=1.,angle=2*pi)
     function larCircle0(shape=36)
         V,CV=LARLIB.larCuboids([shape])
         V=(angle/shape)*V
@@ -8,7 +8,7 @@ function larCircle(radius=1,angle=2*pi)
     return larCircle0
 end
 
-function larHelix(radius=1,pitch=1,nturns=2)
+function larHelix(radius=1.,pitch=1.,nturns=2)
     function larHelix0(shape=36*nturns)
         angle=nturns*2*pi
         V,CV=LARLIB.larCuboids([shape])
@@ -18,9 +18,9 @@ function larHelix(radius=1,pitch=1,nturns=2)
         return W,CV
     end
     return larHelix0
- end
+ end 
 
-function larDisk(radius=1,angle=2*pi)
+function larDisk(radius=1.,angle=2*pi)
     function larDisk0(shape=[36,1])
         V,CV=LARLIB.larCuboids(shape)
         V=[1./shape[1] 0;0 1./shape[2]]*V
@@ -123,47 +123,22 @@ function larBall(radius=1,angle1=pi,angle2=2*pi)
     function larBall0(shape=[18,36])
         V,CV=larSphere(radius,angle1,angle2)(shape)
         W = [Any[V[h,k] for h=1:size(V,1)] for k=1:size(V,2)]
-        X,CV=p.checkModel([W,CV])
-        X=transpose(X)
+        W= [map(approxVal(4),v) for v in W]
+        X=hcat(collect(Set(W))...)
         return X,[collect(0:size(X,2)-1)]
     end
     return larBall0
-end
-
-function larBall1(radius=1,angle1=pi,angle2=2*pi)
-    function larBall10(shape=[36,1,1])
-        V,CV=LARLIB.larCuboids(shape)
-        V=[1./shape[1] 0 0;0 1./shape[2] 0;0 0 1./shape[3]]*V
-        V=[angle1 0 0;0 angle2 0;0 0 radius]*V
-        V=broadcast(+,V,[-(angle1)/2,-(angle2)/2,0])
-        W=[V[:,k] for k=1:size(V,2)]
-        X=hcat(map(p->let(u,v,z)=p;[z*cos(u)*cos(v);z*cos(u)*sin(v);z*sin(u)] end,W)...)
-        return X,CV
-    end
-    return larBall10
 end
 
 function larRod(radius=1,height=3,angle=2*pi)
     function larRod0(shape=[36,1])
         V,CV=larCylinder(radius,height,angle)(shape)
         W = [Any[V[h,k] for h=1:size(V,1)] for k=1:size(V,2)]
-        X,CV=p.checkModel([W,CV-1])
-        X=transpose(X)
+        W= [map(approxVal(4),v) for v in W]
+        X=hcat(collect(Set(W))...)
         return X,[collect(0:size(X,2)-1)]
     end
     return larRod0
-end
-
-function larRod1(radius=1,height=3,angle=2*pi)
-    function larRod10(shape=[36,1,1])
-        V,CV=LARLIB.larCuboids(shape)
-        V=[1./shape[1] 0 0;0 1./shape[2] 0;0 0 1./shape[3]]*V
-        V=[angle 0 0;0 radius 0;0 0 height]*V
-        W=[V[:,k] for k=1:size(V,2)]
-        X=hcat(map(p->let(u,v,z)=p;[v*cos(u);v*sin(u);z] end,W)...)
-        return X,CV
-    end
-    return larRod10
 end
 
 function larTorus(r,R,angle1=2*pi,angle2=2*pi)
@@ -182,8 +157,8 @@ function larPizza(r,R,angle=pi)
     function larPizza0(shape=[24,36])
         V,CV=larCrown(r,R,angle)(shape)
         W = [Any[V[h,k] for h=1:size(V,1)] for k=1:size(V,2)]
-        X,CV=p.checkModel([W,CV])
-        X=transpose(X)
+        W= [map(approxVal(4),v) for v in W]
+        X=hcat(collect(Set(W))...)
         H=hcat(X,[0 0;0 0;-r r])
         return H,[collect(0:size(H,2)-1)]
     end
@@ -311,6 +286,17 @@ function larApplyMapper(affineMatrix)
         end
         return larApplyMapper0
     end
+end
+
+function approxVal(PRECISION)
+    function approxVal0(value)
+        out=round(value*(10^(PRECISION)))/10^(PRECISION)
+        if out==-0.0
+            out=0.0
+        end
+        return out 
+    end
+    return approxVal0
 end
 
 
