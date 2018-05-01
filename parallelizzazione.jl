@@ -300,7 +300,7 @@ end
 
 function larTorusPmap(r,R,angle1=2*pi,angle2=2*pi)
     function larTorus0(shape=[24,36,1])
-        V,CV = larCuboids(shape)
+        V,CV = LARLIB.larCuboids(shape)
         V = [angle1/shape[1] 0 0;0 angle2/shape[2] 0;0 0 r/shape[3]]*V
         W = @parallel (append!) for k=1:size(V,2) 
             [V[:,k]] 
@@ -313,13 +313,13 @@ end
 
 function larTorusP(r,R,angle1=2*pi,angle2=2*pi)
     function larTorus0(shape=[24,36,1])
-        V,CV = larCuboids(shape)
+        V,CV = LARLIB.larCuboids(shape)
         V = [angle1/shape[1] 0 0;0 angle2/shape[2] 0;0 0 r/shape[3]]*V
         W = @parallel (append!) for k=1:size(V,2) 
             [V[:,k]] 
         end
         X = @parallel (hcat) for i=1:length(W)
-            [(R+z*cos(W[i][1]))*cos(W[i][2]);(R+z*cos(W[i][1]))*sin(W[i][2]);-z*sin(W[i][1])]
+            [(R+W[i][3]*cos(W[i][1]))*cos(W[i][2]);(R+W[i][3]*cos(W[i][1]))*sin(W[i][2]);-W[i][3]*sin(W[i][1])]
         end
         return X,CV
     end
